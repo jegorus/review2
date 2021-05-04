@@ -36,4 +36,4 @@ jobs:
         pip install aiogram
         pip install bs4
         pip install requests
-        # python -m unittest Testing.py
+        python -m unittest Testing.py
