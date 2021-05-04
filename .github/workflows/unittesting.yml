@@ -1,8 +1,11 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
 name: Python application
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -17,8 +20,8 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
-    - name: Install and Test
+    - name: Install and test
       run: |
         python -m pip install --upgrade pip
         pip install aiogram, bs4, requests
-	python3 -m unittest
+        python3 -m unittest
