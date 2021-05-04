@@ -35,8 +35,5 @@ jobs:
       run: |
         pip install aiogram
         pip install bs4
-        pip install re
         pip install requests
-        pip install sqlite3
-        pip install unittest
-        python -m unittest Testing.py
+        # python -m unittest Testing.py
