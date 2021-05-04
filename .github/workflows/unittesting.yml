@@ -1,0 +1,28 @@
+name: Python application
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+	Test
+	
+	runs-on: ubuntu-latest
+
+steps:
+	-uses: actions/checkout@v2
+	-name: Set up Python 3.9
+	uses: actions/setup-python@v2
+	with:
+	 python-version: 3.9
+	-name: install libraries
+	run: |
+	python -m pip install --upgrade pip
+	pip install aiogram
+	pip install bs4
+	pip install requests
+	-name: Testing
+	run: |
+	python3 -m unittest
