@@ -20,20 +20,18 @@ class RequestsDodoClass:
     pizza_type = 1  # встроенные типы из додо, переменные созданы для удобства
     combo_type = 100  # они на сайте имеют такое же значение
     bonus_type = 6
-    len_limit = 25  # предел длины строки, чтобы не выводит слишком длинные объекты
+    len_limit = 25  # предел длины строки, чтобы не выводить слишком длинные объекты
     price_indent = 35  # отступ для вывода цен
     should_sort_asc = False
     should_sort_desc = False
     is_top_all = True
     top_to_print = 3
 
-    # Блок переменных для парсинга, не все из них используются в коде, некоторые нужны были для отладки
+    # Блок переменных для парсинга
     tag_menu_obj = 'article'
-    tag_menu_name = 'main'
     tag_menu_price = 'span'
 
     class_menu_obj = 'sc-1x0pa1d-3 jFTBFr'
-    class_menu_name = 'sc-1x0pa1d-0 hJpFjQ'
     class_menu_price = 'money__value'
 
     def __init__(self):
@@ -44,8 +42,7 @@ class RequestsDodoClass:
     def soup_find_name(self, item):
         is_less_than_limit = True  # чтобы не добавлять слишком длинные строки
         result = re.split(r'\"', str(item))
-        # пришлось использовать регулярные выражения, т. к. сайт Додо странно реагирует на некоторые команды
-        # и вообще он как-то криво написан, хуже чем этот бот
+        # поиск названия: через re, т. к. додо не всегда возвращает атрибуты через get
         title_str = ' title='
         for i in range(len(result)):
             if result[i] == title_str:
@@ -64,7 +61,7 @@ class RequestsDodoClass:
 
     def soup_find_price(self, item):
         self.price_items = item.find(self.tag_menu_price, class_=self.class_menu_price).get_text(strip=True)
-        self.comp.append(int(re.sub(r',', '', self.price_items)))
+        self.comp.append(int(re.sub(r',', '', self.price_items)))  # замена '3,999' -> 3999
 
     def soup_find_menu(self):
         print("starting to find menu")
@@ -72,7 +69,7 @@ class RequestsDodoClass:
         for item in self.obj_items:
             self.comp = []
             is_less = self.soup_find_name(item)
-            if is_less:
+            if is_less:  # если длина названия меньше, чем self.len_limit
                 self.soup_find_price(item)
                 self.comp[0] = self.comp[0].replace(u'\xa0', u' ')  # поменять кодировку
                 self.MySQLiteObj.add_object(self.comp)
@@ -87,16 +84,18 @@ class RequestsDodoClass:
         print(self.response.text)
 
     def make_menu_str(self, str_type):
+        # str_type - тип: пицца, комбо, бонус
         sort_arg = ""
-        if self.should_sort_asc:
+        if self.should_sort_asc:  # заполняется в команде sort
             sort_arg = " ORDER by price"
         elif self.should_sort_desc:
             sort_arg = " ORDER by price DESC"
         ret_str = "```\n"
-        counter = 0
+        counter = 0  # проверяет количество объектов для вывода
         for value in self.MySQLiteObj.sql.execute(f"SELECT * FROM pizza_table{sort_arg}"):
-            str_to_format = ":{:>" + str(self.price_indent - len(value[0])) + "}₽"
-            if value[1] == str_type:
+            str_to_format = ":{:>" + str(self.price_indent - len(value[0])) + "}₽"  # для форматирования строки
+            if value[1] == str_type:  # выводит только объеты нужного типа, т. к. если вывести все, то строка будет
+                # слишком длинной
                 ret_str += value[0] + str_to_format.format(value[2]) + '\n'
                 counter += 1
             if not self.is_top_all and counter >= self.top_to_print:
@@ -104,4 +103,4 @@ class RequestsDodoClass:
         if counter == 0:
             ret_str += "Пропишите /menu\n"
         ret_str += "```\n"
-        return ret_str
+        return ret_str  # эта строка передается для печати с помощью md

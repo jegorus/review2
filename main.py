@@ -16,12 +16,11 @@ MyDodoRequestObj = RequestsDodoClass()
 MyPromoRequestObj = RequestPromoClass()
 
 
-# При появлении ошибки при вызове пиццы при запуске бота ввести команду еще раз, но /start перед этим
-# Upd: Вроде я ее уже пофиксил
+# выводит описание
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
     if message.text == "/start":
-        # в start происходит парсинг
+        # в start происходит парсинг додо
         MyDodoRequestObj.MySQLiteObj.remove_objects()
         MyDodoRequestObj.get_request(myConfig.PIZZA_LINK)
         MyDodoRequestObj.soup_find_menu()
@@ -47,6 +46,7 @@ async def send_welcome(message: types.Message):
         reply=False)
 
 
+# выводит промокоды
 @dp.message_handler(commands=['promo'])
 async def print_promo(message: types.Message):
     if message.text == '/promo all':
@@ -61,8 +61,9 @@ async def print_promo(message: types.Message):
 # https://stackoverflow.com/questions/56030395/how-to-format-bot-send-message-output-so-it-aligns-like-a-table/56040072
 
 
+# выводит меню
 @dp.message_handler(commands=['menu'])
-async def menu_button(message: types.Message):
+async def menu_message(message: types.Message):
     # в menu происходит парсинг
     MyDodoRequestObj.MySQLiteObj.remove_objects()
     MyDodoRequestObj.get_request(myConfig.PIZZA_LINK)
@@ -75,22 +76,22 @@ async def menu_button(message: types.Message):
 
 
 @dp.message_handler(commands=['pizza'])
-async def list_menu(message: types.Message):
+async def print_menu_pizza(message: types.Message):
     await message.reply(MyDodoRequestObj.make_menu_str(MyDodoRequestObj.pizza_type), reply=False, parse_mode="Markdown")
 
 
 @dp.message_handler(commands=['combo'])
-async def list_menu(message: types.Message):
+async def print_menu_combo(message: types.Message):
     await message.reply(MyDodoRequestObj.make_menu_str(MyDodoRequestObj.combo_type), reply=False, parse_mode="Markdown")
 
 
 @dp.message_handler(commands=['bonus'])
-async def list_menu(message: types.Message):
+async def print_menu_bonus(message: types.Message):
     await message.reply(MyDodoRequestObj.make_menu_str(MyDodoRequestObj.bonus_type), reply=False, parse_mode="Markdown")
 
 
 @dp.message_handler(commands=['sort'])
-async def should_sort(message: types.Message):
+async def print_sorted(message: types.Message):
     if message.text == '/sort asc':
         MyDodoRequestObj.should_sort_asc = True
         MyDodoRequestObj.should_sort_desc = False
@@ -107,6 +108,7 @@ async def should_sort(message: types.Message):
         await message.reply("Неизвестная команда", reply=False)
 
 
+# выводит только часть элементов
 @dp.message_handler(commands=['top'])
 async def print_top(message: types.Message):
     if message.text == '/top all':
@@ -134,5 +136,6 @@ async def send_hi(message: types.Message):
         await message.reply('Неизвестная команда', reply=False)
 
 
+# запускается поллинг
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)

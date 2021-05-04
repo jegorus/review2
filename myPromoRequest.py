@@ -61,4 +61,4 @@ class RequestPromoClass:
         if counter == 0:
             ret_str += "нет промокодов для данного поиска\n"
         ret_str += "```\n"
-        return ret_str
+        return ret_str  # строка передается для печати
