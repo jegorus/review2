@@ -1,7 +1,7 @@
+import re
+
 import logging
 from aiogram import Bot, Dispatcher, executor, types
-
-import re
 
 import myConfig  # файл с данными и настройками
 from myDodoRequest import RequestsDodoClass

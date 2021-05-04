@@ -1,7 +1,7 @@
+import re
+
 import requests
 from bs4 import BeautifulSoup
-
-import re
 
 import myConfig
 from mySQLite import SQLClass
