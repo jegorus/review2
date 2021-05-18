@@ -29,6 +29,7 @@ class TestBot(unittest.TestCase):
         main.MyDodoRequestObj.MySQLiteObj.remove_objects()
         main.MyDodoRequestObj.get_request(myConfig.PIZZA_LINK)
         main.MyDodoRequestObj.soup_find_menu()
+        main.MyDodoRequestObj.MySQLiteObj.sql.execute("SELECT * FROM pizza_table")
         self.assertNotEqual(main.MyDodoRequestObj.MySQLiteObj.sql.fetchall(), [])
 
     def test_remove_objects(self):  # таблица очищается при вызове remove_objects
@@ -36,6 +37,7 @@ class TestBot(unittest.TestCase):
         main.MyDodoRequestObj.get_request(myConfig.PIZZA_LINK)
         main.MyDodoRequestObj.soup_find_menu()
         main.MyDodoRequestObj.MySQLiteObj.remove_objects()
+        main.MyDodoRequestObj.MySQLiteObj.sql.execute("SELECT * FROM pizza_table")
         self.assertEqual(main.MyDodoRequestObj.MySQLiteObj.sql.fetchall(), [])
 
     def test_sort(self):
