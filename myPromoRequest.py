@@ -58,4 +58,4 @@ class RequestPromoClass:
             ret_str += promo[0] + ":  " + promo[1] + '\n'
         if ret_str == "":
             ret_str = "нет промокодов для данного поиска\n"
-        return "```\n" + ret_str + "```\n" # строка передается для печати
+        return "```\n" + ret_str + "```\n"  # строка передается для печати
