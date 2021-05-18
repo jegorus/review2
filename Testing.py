@@ -7,7 +7,7 @@ import myConfig
 class TestBot(unittest.TestCase):
 
     def test_token_test(self):
-        self.asserEqual(myConfig.TOKEN[1], '7')  # проверка нахождения токена
+        self.assertEqual(myConfig.TOKEN[1], '7')  # проверка нахождения токена
 
     def test_get_request_dodo(self):  # проверка подключения к додо
         link = myConfig.PIZZA_LINK
