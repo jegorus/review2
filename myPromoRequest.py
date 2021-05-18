@@ -26,7 +26,7 @@ class RequestPromoClass:
     def get_request(self, link):
         self.response = requests.get(link, headers=self.HEADERS)
         if self.response.ok:
-            print("request_get promo is completed successfully")
+            # print("request_get promo is completed successfully")
             self.soup = BeautifulSoup(self.response.content, 'html.parser')
 
     def soup_find_promo(self, find_str):
@@ -53,12 +53,9 @@ class RequestPromoClass:
                             self.promos.append([promo_title.text, coupon_str])
 
     def make_menu_str(self):
-        ret_str = "```\n"
-        counter = 0
+        ret_str = ""
         for promo in self.promos:
             ret_str += promo[0] + ":  " + promo[1] + '\n'
-            counter += 1
-        if counter == 0:
-            ret_str += "нет промокодов для данного поиска\n"
-        ret_str += "```\n"
-        return ret_str  # строка передается для печати
+        if ret_str == "":
+            ret_str = "нет промокодов для данного поиска\n"
+        return "```\n" + ret_str + "```\n" # строка передается для печати

@@ -64,7 +64,7 @@ class RequestsDodoClass:
         self.comp.append(int(re.sub(r',', '', self.price_items)))  # замена '3,999' -> 3999
 
     def soup_find_menu(self):
-        print("starting to find menu")
+        # print("starting to find menu")
         self.obj_items = self.soup.findAll(self.tag_menu_obj, class_=self.class_menu_obj)
         for item in self.obj_items:
             self.comp = []
@@ -77,7 +77,7 @@ class RequestsDodoClass:
     def get_request(self, link):  # получает данные со страницы
         self.response = requests.get(link, headers=self.HEADERS)
         if self.response.ok:
-            print("request_get dodo is completed successfully")
+            # print("request_get dodo is completed successfully")
             self.soup = BeautifulSoup(self.response.content, 'html.parser')
 
     def print_request_text(self):  # для печати html страницы
@@ -90,9 +90,12 @@ class RequestsDodoClass:
             sort_arg = " ORDER by price"
         elif self.should_sort_desc:
             sort_arg = " ORDER by price DESC"
-        ret_str = "```\n"
+
+        self.MySQLiteObj.sql.execute(f"SELECT * FROM pizza_table{sort_arg}")
+        values = self.MySQLiteObj.sql.fetchall()
+        ret_str = ""
         counter = 0  # проверяет количество объектов для вывода
-        for value in self.MySQLiteObj.sql.execute(f"SELECT * FROM pizza_table{sort_arg}"):
+        for value in values:
             str_to_format = ":{:>" + str(self.price_indent - len(value[0])) + "}₽"  # для форматирования строки
             if value[1] == str_type:  # выводит только объеты нужного типа, т. к. если вывести все, то строка будет
                 # слишком длинной
@@ -101,6 +104,5 @@ class RequestsDodoClass:
             if not self.is_top_all and counter >= self.top_to_print:
                 break
         if counter == 0:
-            ret_str += "Пропишите /menu\n"
-        ret_str += "```\n"
-        return ret_str  # эта строка передается для печати с помощью md
+            ret_str = "Пропишите /menu\n"
+        return "```\n" + ret_str + "```\n"  # эта строка передается для печати с помощью md

@@ -7,7 +7,6 @@ import myConfig
 class TestBot(unittest.TestCase):
 
     def test_token_test(self):
-        print(myConfig.TOKEN)
         self.assertEqual(myConfig.TOKEN[1], '7')  # проверка нахождения токена
 
     def test_get_request_dodo(self):  # проверка подключения к додо
@@ -56,8 +55,8 @@ class TestBot(unittest.TestCase):
         elif main.MyDodoRequestObj.should_sort_desc:
             sort_arg = " ORDER by price DESC"
         sort_check = 0
-        for value in main.MyDodoRequestObj.MySQLiteObj.sql.execute(
-                f"SELECT * FROM pizza_table{sort_arg}"
-        ):
+        main.MyDodoRequestObj.MySQLiteObj.sql.execute(f"SELECT * FROM pizza_table{sort_arg}")
+        values = main.MyDodoRequestObj.MySQLiteObj.sql.fetchall()
+        for value in values:
             self.assertGreaterEqual(value[2], sort_check)  # проверка на отсортированность
             sort_check = value[2]

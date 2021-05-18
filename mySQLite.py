@@ -27,7 +27,9 @@ class SQLClass:
         self.db.commit()
 
     def print_table(self):  # вспомогательная функция
-        for value in self.sql.execute("SELECT * FROM pizza_table"):
+        self.sql.execute("SELECT * FROM pizza_table")
+        values = self.sql.fetchall()
+        for value in values:
             print(value)
 
     def remove_objects(self):
