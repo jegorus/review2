@@ -7,6 +7,7 @@ import myConfig
 class TestBot(unittest.TestCase):
 
     def test_token_test(self):
+        print(myConfig.TOKEN)
         self.assertEqual(myConfig.TOKEN[1], '7')  # проверка нахождения токена
 
     def test_get_request_dodo(self):  # проверка подключения к додо
@@ -28,22 +29,14 @@ class TestBot(unittest.TestCase):
         main.MyDodoRequestObj.MySQLiteObj.remove_objects()
         main.MyDodoRequestObj.get_request(myConfig.PIZZA_LINK)
         main.MyDodoRequestObj.soup_find_menu()
-        counter = 0
-        for value in main.MyDodoRequestObj.MySQLiteObj.sql.execute("SELECT * FROM pizza_table"):
-            if isinstance(value, tuple):
-                counter += 1
-        self.assertGreater(counter, 0)
+        self.assertNotEqual(main.MyDodoRequestObj.MySQLiteObj.sql.fetchall(), [])
 
     def test_remove_objects(self):  # таблица очищается при вызове remove_objects
         main.MyDodoRequestObj.MySQLiteObj.remove_objects()
         main.MyDodoRequestObj.get_request(myConfig.PIZZA_LINK)
         main.MyDodoRequestObj.soup_find_menu()
         main.MyDodoRequestObj.MySQLiteObj.remove_objects()
-        counter = 0
-        for value in main.MyDodoRequestObj.MySQLiteObj.sql.execute("SELECT * FROM pizza_table"):
-            if isinstance(value, tuple):
-                counter += 1
-        self.assertEqual(counter, 0)
+        self.assertEqual(main.MyDodoRequestObj.MySQLiteObj.sql.fetchall(), [])
 
     def test_sort(self):
         main.MyDodoRequestObj.MySQLiteObj.remove_objects()
