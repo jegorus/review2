@@ -13,6 +13,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      BOT_TOKEN: 1703612469:AAFvb-vSuFrYwF8mvU2oPi-9p9hx0k1GnVc
 
     steps:
     - uses: actions/checkout@v2
