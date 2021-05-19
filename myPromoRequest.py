@@ -55,7 +55,7 @@ class RequestPromoClass:
     def make_menu_str(self):
         ret_str = ""
         for promo in self.promos:
-            ret_str += promo[0] + ":  " + promo[1] + '\n'
-        if ret_str == "":
+            ret_str += f"{promo[0]} :   {promo[1]} \n"
+        if not ret_str:
             ret_str = "нет промокодов для данного поиска\n"
-        return "```\n" + ret_str + "```\n"  # строка передается для печати
+        return f"```\n{ret_str} ```\n"  # строка передается для печати

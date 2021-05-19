@@ -97,12 +97,14 @@ class RequestsDodoClass:
         counter = 0  # проверяет количество объектов для вывода
         for value in values:
             str_to_format = ":{:>" + str(self.price_indent - len(value[0])) + "}₽"  # для форматирования строки
+            # здесь fstring использовать неудобно, т. к. в ней формируется fstring и {} должны передаваться как текст
+
             if value[1] == str_type:  # выводит только объеты нужного типа, т. к. если вывести все, то строка будет
                 # слишком длинной
-                ret_str += value[0] + str_to_format.format(value[2]) + '\n'
+                ret_str += f"{value[0]}{str_to_format.format(value[2])} \n"
                 counter += 1
             if not self.is_top_all and counter >= self.top_to_print:
                 break
         if counter == 0:
             ret_str = "Пропишите /menu\n"
-        return "```\n" + ret_str + "```\n"  # эта строка передается для печати с помощью md
+        return f"```\n{ret_str} ```\n"  # эта строка передается для печати с помощью md
