@@ -75,10 +75,17 @@ class RequestsDodoClass:
                 self.MySQLiteObj.add_object(self.comp)
 
     def get_request(self, link):  # получает данные со страницы
-        self.response = requests.get(link, headers=self.HEADERS)
+        #self.response = requests.get(link, headers=self.HEADERS) old version
+
+        session = requests.Session()
+        session.headers.update({'User-Agent': myConfig.USER_AGENT})
+        self.response = session.get(link, timeout=1)
+
+        self.response.raise_for_status()
         if self.response.ok:
             # print("request_get dodo is completed successfully")
             self.soup = BeautifulSoup(self.response.content, 'html.parser')
+
 
     def print_request_text(self):  # для печати html страницы
         print(self.response.text)
@@ -106,5 +113,5 @@ class RequestsDodoClass:
             if not self.is_top_all and counter >= self.top_to_print:
                 break
         if counter == 0:
-            ret_str = "Пропишите /menu\n"
+            ret_str = "Пропишите /menu (не нашлись объекты)\n"
         return f"```\n{ret_str} ```\n"  # эта строка передается для печати с помощью md

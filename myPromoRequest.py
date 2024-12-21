@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 import myConfig
 
@@ -7,16 +8,11 @@ import myConfig
 class RequestPromoClass:
     response = None
     new_items = None
-    HEADERS = {  # Чтобы не сайт не принял за бота
-        'User Agent': myConfig.USER_AGENT
-    }
     promo_all = True
     soup = None  # содержит html додо
 
     tag_promo = 'div'
-    class_promo = 'item-tovars'
-    class_old_promo = 'tovars tovars-old'
-    coupon_class = 'clipboardjs-workaround'
+    class_promo = 'block block_dv-large block_mv-rounded coupon'
     promos = []
 
     def __init__(self):
@@ -24,33 +20,20 @@ class RequestPromoClass:
         self.soup_find_promo('')
 
     def get_request(self, link):
-        self.response = requests.get(link, headers=self.HEADERS)
+        session = requests.Session()
+        session.headers.update({'User-Agent': myConfig.USER_AGENT})
+
+        self.response = session.get(link)
+        self.response.raise_for_status()
         if self.response.ok:
-            # print("request_get promo is completed successfully")
             self.soup = BeautifulSoup(self.response.content, 'html.parser')
 
+    # новая версия: 2024
     def soup_find_promo(self, find_str):
-        self.promos = []
-        # поиск объектов
-        all_items = set(self.soup.findAll(self.tag_promo, class_=[f'{self.class_promo}']))
-        old_items = set(self.soup.findAll(self.tag_promo, class_=[f'{self.class_old_promo}']))
-        self.new_items = all_items - old_items
-        for item in self.new_items:
-            find_check = -2 + (not self.promo_all)  # если promo_all = True, то -2 != -1, и программа будет считать,
-            # что найдено совпадение
-            if item.text.find(find_str) != find_check:
-                # поиск купона
-                coupon_str = item.find(self.tag_promo, class_=self.coupon_class).text
-                if coupon_str != '':
-                    # выделение названия
-                    tag_t = 'a'
-                    tag_extra = 'p'
-                    class_t = "click-coupon"
-                    class_extra = "sales"
-                    need_item = set(item.findAll(tag_t, class_=class_t))
-                    for promo_title in need_item:  # убран лишний текст
-                        if not promo_title.find(tag_extra, class_=class_extra):
-                            self.promos.append([promo_title.text, coupon_str])
+        items = self.soup.find("script", {"id": "vike_pageContext"})
+        self.promos = [(promo[1], promo[0]) for promo in re.findall(r'"promoCode":"(\w+)","title":"([^"\\]+)', items.string)]
+        if not self.promo_all:
+            self.promos = [prom for prom in self.promos if re.search(find_str, prom[0])]
 
     def make_menu_str(self):
         ret_str = ""

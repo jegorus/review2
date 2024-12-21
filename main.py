@@ -1,7 +1,8 @@
 import re
 
 import logging
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, types, executor
+
 
 import myConfig  # файл с данными и настройками
 from myDodoRequest import RequestsDodoClass
@@ -26,6 +27,7 @@ async def send_welcome(message: types.Message):
         MyDodoRequestObj.soup_find_menu()
     await message.reply(
         "/help для помощи\n"
+        "upd: додо блокирует парсер, плюс код довольно старый, поэтому работает только /promo"
         "Бот для анализа сайта Додо пицца\n"
         "город - Москва\n"
         "/menu собирает данные и показывает меню сайта додо пицца\n"
@@ -54,7 +56,7 @@ async def print_promo(message: types.Message):
     else:
         MyPromoRequestObj.promo_all = False
     MyPromoRequestObj.get_request(myConfig.PROMO_LINK)
-    find_str = re.findall(r'\w+$', message.text)[0]  # ищет последнее слово
+    find_str = re.findall(r'/promo (.+)', message.text)[0]
     MyPromoRequestObj.soup_find_promo(find_str)
     await message.reply(MyPromoRequestObj.make_menu_str(), reply=False, parse_mode="Markdown")
 # почему md:
